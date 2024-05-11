@@ -61,9 +61,19 @@ app.MapGet("/games", () => games)
     .WithName("GetGames")
     .WithOpenApi();
 
-app.MapGet("games/{id}", (int id) => games.FirstOrDefault(g => g.Id == id))
+app.MapGet("/games/{id}", (int id) => games.FirstOrDefault(g => g.Id == id))
     .WithName("GetGameById")
     .WithOpenApi();
+
+app.MapPost("/games", (Game game) =>
+    {
+        game.Id = games.Max(g => g.Id) + 1;
+        games.Add(game);
+        return Results.CreatedAtRoute("GetGameById", new { id = game.Id }, game);
+    })
+    .WithName("CreateGame")
+    .WithOpenApi();
+
 
 var summaries = new[]
 {
