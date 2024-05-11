@@ -61,6 +61,10 @@ app.MapGet("/games", () => games)
     .WithName("GetGames")
     .WithOpenApi();
 
+app.MapGet("games/{id}", (int id) => games.FirstOrDefault(g => g.Id == id))
+    .WithName("GetGameById")
+    .WithOpenApi();
+
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
