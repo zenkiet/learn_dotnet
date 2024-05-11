@@ -57,6 +57,10 @@ List<Game> games =
     }
 ];
 
+app.MapGet("/games", () => games)
+    .WithName("GetGames")
+    .WithOpenApi();
+
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
