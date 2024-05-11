@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "YUfWYVnl7Oi1yJdZUcfW+YHwY1xjyQ2Xc//o070JC5EROX4w2Zdg+Ha0ursMmoKfYSpmddCgFHpXDKCq+uM6Ew==",
+  "dgSpecHash": "pylY5hHOC1NlrMWZ0Mekl+mbPLq7c3vksVHSrZKi0gBLHt4oKkaTfh4yeZGphbLSL2wuH0NNVHksdG19op/7Gg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\hthh8\\OneDrive\\Documents\\GitHub\\learn_dotnet\\GameStore.API\\GameStore.API.csproj",
+  "projectFilePath": "/var/home/zenfection/Documents/GitHub/Learns/learn_dotnet/GameStore.API/GameStore.API.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }
