@@ -1,7 +1,7 @@
 using GameStore.API.Entities;
 
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-WebApplication app = builder.Build();
+var builder = WebApplication.CreateBuilder(args);
+var app = builder.Build();
 
 List<Game> games =
 [
@@ -54,6 +54,23 @@ app.MapPost("/games", (Game game) =>
     games.Add(game);
     return Results.CreatedAtRoute("GetGameById", new { id = game.Id }, game);
 }).WithName("CreateGame");
+
+app.MapPut("/games/{id}", (int id, Game game) =>
+{
+    Game? existingGame = games.FirstOrDefault(g => g.Id == id);
+    if (existingGame is null)
+    {
+        return Results.NotFound();
+    }
+
+    existingGame.Name = game.Name;
+    existingGame.Genre = game.Genre;
+    existingGame.Price = game.Price;
+    existingGame.ImageUri = game.ImageUri;
+    existingGame.UpdatedAt = DateTime.Now;
+
+    return Results.NoContent();
+}).WithName("UpdateGame");
 
 app.MapGet("/", () => "Hello World!");
 
