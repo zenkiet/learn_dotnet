@@ -43,7 +43,10 @@ List<Game> games =
 ];
 
 app.MapGet("/games", () => games)
-    .WithName("GetGames")
+    .WithName("GetGames");
+
+app.MapGet("games/{id}", (int id) => games.FirstOrDefault(g => g.Id == id))
+    .WithName("GetGameById");
 
 app.MapGet("/", () => "Hello World!");
 
