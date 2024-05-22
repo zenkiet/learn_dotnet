@@ -42,6 +42,9 @@ List<Game> games =
     }
 ];
 
+app.MapGet("/games", () => games)
+    .WithName("GetGames")
+
 app.MapGet("/", () => "Hello World!");
 
 app.Run();
