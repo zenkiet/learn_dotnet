@@ -1,7 +1,7 @@
 using GameStore.API.Entities;
 
-var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+WebApplication app = builder.Build();
 
 List<Game> games =
 [
@@ -45,8 +45,15 @@ List<Game> games =
 app.MapGet("/games", () => games)
     .WithName("GetGames");
 
-app.MapGet("games/{id}", (int id) => games.FirstOrDefault(g => g.Id == id))
+app.MapGet("/games/{id}", (int id) => games.FirstOrDefault(g => g.Id == id))
     .WithName("GetGameById");
+
+app.MapPost("/games", (Game game) =>
+{
+    game.Id = games.Max(g => g.Id) + 1;
+    games.Add(game);
+    return Results.CreatedAtRoute("GetGameById", new { id = game.Id }, game);
+}).WithName("CreateGame");
 
 app.MapGet("/", () => "Hello World!");
 
