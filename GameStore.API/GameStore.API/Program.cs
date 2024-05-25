@@ -57,23 +57,25 @@ List<Game> games =
     }
 ];
 
-app.MapGet("/games", () => games)
+var gameGroup = app.MapGroup("/games");    
+
+gameGroup.MapGet("/", () => games)
     .WithName("GetGames").WithOpenApi();
 
-app.MapGet("/games/{id}", (int id) =>
+gameGroup.MapGet("/{id}", (int id) =>
 {
     var game = games.FirstOrDefault(g => g.Id == id);
     return game is null ? Results.NotFound() : Results.Ok(game);
 }).WithName("GetGameById").WithOpenApi();
 
-app.MapPost("/games", (Game game) =>
+gameGroup.MapPost("/", (Game game) =>
 {
     game.Id = games.Max(g => g.Id) + 1;
     games.Add(game);
     return Results.CreatedAtRoute("GetGameById", new { id = game.Id }, game);
 }).WithName("CreateGame").WithOpenApi();
 
-app.MapPut("/games/{id}", (int id, Game game) =>
+gameGroup.MapPut("/{id}", (int id, Game game) =>
 {
     Game? existingGame = games.FirstOrDefault(g => g.Id == id);
     if (existingGame is null)
@@ -90,7 +92,7 @@ app.MapPut("/games/{id}", (int id, Game game) =>
     return Results.NoContent();
 }).WithName("UpdateGame").WithOpenApi();
 
-app.MapDelete("/games/{id}", (int id) =>
+gameGroup.MapDelete("/{id}", (int id) =>
 {
     var existingGame = games.FirstOrDefault(g => g.Id == id);
     
