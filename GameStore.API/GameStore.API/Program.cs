@@ -57,7 +57,7 @@ List<Game> games =
     }
 ];
 
-var gameGroup = app.MapGroup("/games");    
+var gameGroup = app.MapGroup("/games").WithParameterValidation();    
 
 gameGroup.MapGet("/", () => games)
     .WithName("GetGames").WithOpenApi();
