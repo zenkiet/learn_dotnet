@@ -60,8 +60,11 @@ List<Game> games =
 app.MapGet("/games", () => games)
     .WithName("GetGames").WithOpenApi();
 
-app.MapGet("/games/{id}", (int id) => games.FirstOrDefault(g => g.Id == id))
-    .WithName("GetGameById").WithOpenApi();
+app.MapGet("/games/{id}", (int id) =>
+{
+    var game = games.FirstOrDefault(g => g.Id == id);
+    return game is null ? Results.NotFound() : Results.Ok(game);
+}).WithName("GetGameById").WithOpenApi();
 
 app.MapPost("/games", (Game game) =>
 {
@@ -89,7 +92,8 @@ app.MapPut("/games/{id}", (int id, Game game) =>
 
 app.MapDelete("/games/{id}", (int id) =>
 {
-    Game? existingGame = games.FirstOrDefault(g => g.Id == id);
+    var existingGame = games.FirstOrDefault(g => g.Id == id);
+    
     if (existingGame is null)
     {
         return Results.NotFound();
