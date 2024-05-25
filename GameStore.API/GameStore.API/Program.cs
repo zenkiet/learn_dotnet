@@ -1,7 +1,22 @@
 using GameStore.API.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
 
 List<Game> games =
 [
@@ -43,17 +58,17 @@ List<Game> games =
 ];
 
 app.MapGet("/games", () => games)
-    .WithName("GetGames");
+    .WithName("GetGames").WithOpenApi();
 
 app.MapGet("/games/{id}", (int id) => games.FirstOrDefault(g => g.Id == id))
-    .WithName("GetGameById");
+    .WithName("GetGameById").WithOpenApi();
 
 app.MapPost("/games", (Game game) =>
 {
     game.Id = games.Max(g => g.Id) + 1;
     games.Add(game);
     return Results.CreatedAtRoute("GetGameById", new { id = game.Id }, game);
-}).WithName("CreateGame");
+}).WithName("CreateGame").WithOpenApi();
 
 app.MapPut("/games/{id}", (int id, Game game) =>
 {
@@ -70,7 +85,7 @@ app.MapPut("/games/{id}", (int id, Game game) =>
     existingGame.UpdatedAt = DateTime.Now;
 
     return Results.NoContent();
-}).WithName("UpdateGame");
+}).WithName("UpdateGame").WithOpenApi();
 
 app.MapDelete("/games/{id}", (int id) =>
 {
@@ -82,7 +97,7 @@ app.MapDelete("/games/{id}", (int id) =>
 
     games.Remove(existingGame);
     return Results.NoContent();
-}).WithName("DeleteGame");
+}).WithName("DeleteGame").WithOpenApi();
 
 app.MapGet("/", () => "Hello World!");
 

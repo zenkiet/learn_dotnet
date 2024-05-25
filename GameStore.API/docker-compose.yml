@@ -1,0 +1,6 @@
+﻿services:
+  gamestore.api:
+    image: gamestore.api
+    build:
+      context: .
+      dockerfile: GameStore.API/Dockerfile
