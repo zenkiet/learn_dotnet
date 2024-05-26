@@ -1,0 +1,31 @@
+@GameStore.API_HostAddress = http://localhost:5074
+
+GET {{GameStore.API_HostAddress}}/games/
+Accept: application/json
+
+### 
+GET {{GameStore.API_HostAddress}}/games/1
+Accept: application/json
+
+###
+POST {{GameStore.API_HostAddress}}/games/
+Accept: application/json
+Content-Type: application/json
+
+{
+  "Name": "Game Next",
+  "Genre": "Action",
+  "Price": 100,
+  "ImageUri": "https://www.google.com"
+}
+
+
+###
+PUT {{GameStore.API_HostAddress}}/games/1
+Accept: application/json
+Content-Type: application/json
+
+### 
+DELETE {{GameStore.API_HostAddress}}/games/1
+Accept: application/json
+Content-Type: application/json
