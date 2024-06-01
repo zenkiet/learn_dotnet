@@ -1,4 +1,4 @@
-using 999GameStore.API.Endpoints;
+using GameStore.API.Endpoints;
 using GameStore.API.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
