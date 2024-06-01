@@ -5,45 +5,44 @@ namespace GameStore.API.Endpoints;
 
 public static class GameEndpoint
 {
-    private static readonly InMemGamesRepository Repository = new InMemGamesRepository();
      
     public static RouteGroupBuilder MapGamesEndpoints(this IEndpointRouteBuilder routes)
     {
         var gameGroup = routes.MapGroup("/games").WithParameterValidation();    
 
-        gameGroup.MapGet("/", () => Repository.GetAll())
+        gameGroup.MapGet("/", (IGamesRepository repository) => repository.GetAll())
             .WithName("GetGames").WithOpenApi();
 
-        gameGroup.MapGet("/{id}", (int id) =>
+        gameGroup.MapGet("/{id}", (IGamesRepository repository,int id) =>
         {
-            var game = Repository.Get(id);
+            var game = repository.Get(id);
             return game is not null ? Results.Ok(game) : Results.NotFound();
         }).WithName("GetGameById").WithOpenApi();
 
-        gameGroup.MapPost("/", (Game game) =>
+        gameGroup.MapPost("/", (IGamesRepository repository, Game game) =>
         {
-            Repository.Add(game);
+            repository.Add(game);
             return Results.CreatedAtRoute("GetGameById", new { id = game.Id }, game);
         }).WithName("CreateGame").WithOpenApi();
 
-        gameGroup.MapPut("/{id}", (int id, Game game) =>
+        gameGroup.MapPut("/{id}", (IGamesRepository repository, int id, Game game) =>
         {
-            var existingGame = Repository.Get(id);
+            var existingGame = repository.Get(id);
             
             if (existingGame is null) return Results.NotFound();
             
-            Repository.Update(game);
+            repository.Update(game);
             return Results.NoContent();
 
         }).WithName("UpdateGame").WithOpenApi();
 
-        gameGroup.MapDelete("/{id}", (int id) =>
+        gameGroup.MapDelete("/{id}", (IGamesRepository repository, int id) =>
         {
-            var existingGame = Repository.Get(id);
+            var existingGame = repository.Get(id);
 
             if (existingGame is not null)
             {
-                Repository.Delete(id);  
+                repository.Delete(id);  
                 return Results.NoContent();
             }
             return Results.NotFound();

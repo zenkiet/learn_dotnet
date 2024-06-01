@@ -2,7 +2,7 @@ using GameStore.API.Entities;
 
 namespace GameStore.API.Repositories;
 
-public class InMemGamesRepository
+public class GamesRepository : IGamesRepository
 {
     private static readonly List<Game> Games =
     [

@@ -1,7 +1,9 @@
 using GameStore.API.Endpoints;
-using GameStore.API.Entities;
+using GameStore.API.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<IGamesRepository, GamesRepository>();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
