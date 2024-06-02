@@ -10,28 +10,42 @@ public static class GameEndpoint
     {
         var gameGroup = routes.MapGroup("/games").WithParameterValidation();    
 
-        gameGroup.MapGet("/", (IGamesRepository repository) => repository.GetAll())
-            .WithName("GetGames").WithOpenApi();
+        gameGroup.MapGet("/", (IGamesRepository repository) => 
+                repository.GetAll().Select(game => game.AsDto())).WithName("GetGames").WithOpenApi();
 
         gameGroup.MapGet("/{id}", (IGamesRepository repository,int id) =>
         {
             var game = repository.Get(id);
-            return game is not null ? Results.Ok(game) : Results.NotFound();
+            return game is not null ? Results.Ok(game.AsDto()) : Results.NotFound();
         }).WithName("GetGameById").WithOpenApi();
 
-        gameGroup.MapPost("/", (IGamesRepository repository, Game game) =>
+        gameGroup.MapPost("/", (IGamesRepository repository, CreateGameDto gameDto) =>
         {
+            var game = new Game
+            {
+                Name = gameDto.Name,
+                Genre = gameDto.Genre,
+                Price = gameDto.Price,
+                ImageUri = gameDto.ImageUri
+            };
+            
             repository.Add(game);
             return Results.CreatedAtRoute("GetGameById", new { id = game.Id }, game);
         }).WithName("CreateGame").WithOpenApi();
 
-        gameGroup.MapPut("/{id}", (IGamesRepository repository, int id, Game game) =>
+        gameGroup.MapPut("/{id}", (IGamesRepository repository, int id, UpdateGameDto gameDto) =>
         {
             var existingGame = repository.Get(id);
             
             if (existingGame is null) return Results.NotFound();
             
-            repository.Update(game);
+            existingGame.Name = gameDto.Name;
+            existingGame.Genre = gameDto.Genre;
+            existingGame.Price = gameDto.Price;
+            existingGame.ImageUri = gameDto.ImageUri;
+            existingGame.UpdatedAt = DateTime.Now;
+            
+            repository.Update(existingGame);
             return Results.NoContent();
 
         }).WithName("UpdateGame").WithOpenApi();
@@ -40,12 +54,13 @@ public static class GameEndpoint
         {
             var existingGame = repository.Get(id);
 
-            if (existingGame is not null)
+            if (existingGame is null)
             {
-                repository.Delete(id);  
-                return Results.NoContent();
+                return Results.NotFound();
             }
-            return Results.NotFound();
+            
+            repository.Delete(id);  
+            return Results.NoContent();
         }).WithName("DeleteGame").WithOpenApi();
 
         return gameGroup;
