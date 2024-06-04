@@ -10,6 +10,8 @@ builder.Services.AddScoped<IGamesRepository, GamesRepository>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var conString = builder.Configuration.GetConnectionString("GameStoreContext");
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
