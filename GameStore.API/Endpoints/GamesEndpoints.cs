@@ -1,5 +1,6 @@
 ﻿
 using GameStore.API.Entities;
+using GameStore.API.Repositories;
 
 namespace GameStore.API.Endpoints
 {
@@ -7,65 +8,35 @@ namespace GameStore.API.Endpoints
     {
         const string GetGameEndpointName = "GetGame";
 
-        static List<Game> games =
-        [
-            new Game()
-    {
-        Id = 1,
-        Name = "The Legend of Zelda: Breath of the Wild",
-        Genre = "Action-adventure",
-        Price = 59.99m,
-        ImageUri = "https://placeholder.co/300",
-    },
-
-    new Game()
-    {
-        Id = 2,
-        Name = "Super Mario Odyssey",
-        Genre = "Platformer",
-        Price = 59.99m,
-        ImageUri = "https://placeholder.co/300",
-    },
-
-    new Game()
-    {
-        Id = 3,
-        Name = "Mario Kart 8 Deluxe",
-        Genre = "Racing",
-        Price = 59.99m,
-        ImageUri = "https://placeholder.co/300",
-    },
-
-    new Game()
-    {
-        Id = 4,
-        Name = "Splatoon 2",
-        Genre = "Shooter",
-        Price = 59.99m,
-        ImageUri = "https://placeholder.co/300",
-    }
-        ];
         public static RouteGroupBuilder MapGamesEndpoints(this IEndpointRouteBuilder routes)
         {
+            InMemGameRepository repository = new();
+
             var group = routes.MapGroup("/games")
                .WithParameterValidation();
-            group.MapGet("/", () => games);
 
-            group.MapGet("/{id}", (int id) => games.FirstOrDefault(g => g.Id == id)).WithName("GetGameById");
+            group.MapGet("/", () => repository.GetAll);
+
+            group.MapGet("/{id}", (int id) =>
+            {
+                Game? game = repository.Get(id);
+                return game is not null ? Results.Ok(game) : Results.NotFound();
+
+            }).WithName("GetGameEndpointName");
 
             group.MapPost("/", (Game game) =>
             {
-                game.Id = games.Max(g => g.Id) + 1;
-                games.Add(game);
-                return Results.CreatedAtRoute("GetGameById", new
+                repository.Create(game);
+
+                return Results.CreatedAtRoute("GetGameEndpointName", new
                 {
                     id = game.Id
                 }, game);
-            }).WithName("CreateGame");
+            });
 
             group.MapPut("/{id}", (int id, Game game) =>
             {
-                var existingGame = games.FirstOrDefault((game) => game.Id == id);
+                var existingGame = repository.Get(id);
 
                 if (existingGame is null)
                 {
@@ -77,19 +48,22 @@ namespace GameStore.API.Endpoints
                 existingGame.Price = game.Price;
                 existingGame.ImageUri = game.ImageUri;
                 existingGame.UpdatedAt = DateTime.Now;
+
+                repository.Update(existingGame);
+
                 return Results.NoContent();
-            }).WithName("UpdateGame");
+            });
 
             group.MapDelete("/{id}", (int id) =>
             {
-                var ExistingGame = games.FirstOrDefault((game) => game.Id == id);
+                Game? game = repository.Get(id);
 
-                if (ExistingGame is null)
+                if (game is null)
                 {
                     return Results.NotFound();
                 }
 
-                games.Remove(ExistingGame);
+                repository.Delete(id);
 
                 return Results.NoContent();
 
