@@ -2,7 +2,7 @@
 
 namespace GameStore.API.Repositories
 {
-    public class InMemGameRepository
+    public class InMemGameRepository : IInMemGameRepository
     {
         private readonly List<Game> games =
         [
